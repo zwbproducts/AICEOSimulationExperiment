@@ -337,7 +337,7 @@ function SimulationPage() {
     const animate = (ts: number) => {
       if (!startTs) startTs = ts;
       const p = Math.min((ts - startTs) / duration, 1);
-      el.style.strokeDashoffset = start + diff * (1 - Math.pow(1 - p, 3));
+      el.style.strokeDashoffset = (start + diff * (1 - Math.pow(1 - p, 3))).toString();
       if (p < 1) quorumAnimRef.current = requestAnimationFrame(animate);
     };
     quorumAnimRef.current = requestAnimationFrame(animate);
