@@ -324,8 +324,9 @@ function SimulationPage() {
 
   /* Quorum circle animation */
   useEffect(() => {
-    const el = document.getElementById("quorumFillCircle") as SVGCircleElement;
+    const el = document.getElementById("quorumFillCircle");
     if (!el) return;
+    const circle = el as unknown as SVGCircleElement;
     const circ = 2 * Math.PI * 42;
     const offset = circ - (quorum / 100) * circ;
     cancelAnimationFrame(quorumAnimRef.current);
