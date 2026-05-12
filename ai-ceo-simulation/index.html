@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI CEO Simulation — Dr. Naledi Khumalo in the Box</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Fredoka+One&display=swap');
+:root {
+  --neon-pink:#ff2d95;--neon-blue:#00f0ff;--neon-green:#39ff14;
+  --neon-purple:#b829dd;--neon-orange:#ff6a00;--neon-yellow:#ffe600;
+  --dark-bg:#0a0a1a;--panel-bg:rgba(15,15,40,0.85);--panel-border:rgba(100,100,255,0.2);
+  --text-primary:#e0e6ff;--text-dim:#7a80a0;--danger:#ff3355;--success:#33ff77;--warning:#ffaa00;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--dark-bg);color:var(--text-primary);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(0,240,255,0.06) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(255,45,149,0.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(184,41,221,0.05) 0%,transparent 50%);pointer-events:none;z-index:0}
+.header{position:relative;z-index:1;background:linear-gradient(135deg,rgba(15,15,40,0.95),rgba(20,10,50,0.95));border-bottom:2px solid var(--neon-blue);padding:16px 30px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 30px rgba(0,240,255,0.15);flex-wrap:wrap;gap:10px}
+.header-left{display:flex;align-items:center;gap:15px}
+.logo-box{width:50px;height:50px;background:linear-gradient(135deg,var(--neon-pink),var(--neon-purple));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:#fff;box-shadow:0 0 20px rgba(255,45,149,0.4);animation:logoPulse 2s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(255,45,149,0.4)}50%{box-shadow:0 0 40px rgba(255,45,149,0.7)}}
+.header h1{font-family:'Orbitron',sans-serif;font-size:18px;background:linear-gradient(90deg,var(--neon-blue),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
+.header-subtitle{font-size:10px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase}
+.header-right{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.live-indicator{display:flex;align-items:center;gap:6px;font-family:'Orbitron',sans-serif;font-size:10px;color:var(--neon-green)}
+.live-dot{width:8px;height:8px;background:var(--neon-green);border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px var(--neon-green)}50%{opacity:.3;box-shadow:none}}
+.score-display{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;color:var(--neon-yellow);text-shadow:0 0 10px rgba(255,230,0,.4)}
+.score-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:2px}
+.grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;padding:16px;max-width:1600px;margin:0 auto}
+.panel{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(10px);transition:transform .2s}
+.panel:hover{transform:translateY(-2px)}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.panel-pink::before{background:linear-gradient(90deg,var(--neon-pink),var(--neon-purple))}
+.panel-blue::before{background:linear-gradient(90deg,var(--neon-blue),#0088ff)}
+.panel-green::before{background:linear-gradient(90deg,var(--neon-green),#00cc66)}
+.panel-orange::before{background:linear-gradient(90deg,var(--neon-orange),var(--neon-yellow))}
+.panel-purple::before{background:linear-gradient(90deg,var(--neon-purple),var(--neon-pink))}
+.panel-title{font-family:'Orbitron',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.span-2{grid-column:span 2}.span-full{grid-column:1/-1}
+.ceo-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--neon-purple),var(--neon-pink));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 0 25px rgba(184,41,221,.4);position:relative}
+.ring{position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--neon-purple);animation:ringPulse 2s ease-in-out infinite}
+.ring-2{inset:-10px;animation-delay:.5s;border-color:var(--neon-pink)}
+.ring-3{inset:-15px;animation-delay:1s;border-color:rgba(184,41,221,.3)}
+@keyframes ringPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.5}}
+.ceo-name{font-family:'Orbitron',sans-serif;font-size:14px;text-align:center;margin-bottom:2px;color:#fff}
+.ceo-title{font-size:10px;color:var(--neon-purple);text-align:center;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.stat-label{font-size:11px;color:var(--text-dim)}
+.stat-value{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700}
+.bar-container{width:100%;height:6px;background:rgba(255,255,255,.05);border-radius:3px;margin-top:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .8s ease,background .5s}
+.haggle-box{background:rgba(0,0,0,.4);border:2px dashed var(--neon-pink);border-radius:10px;padding:16px;text-align:center;margin-bottom:12px}
+.haggle-target{font-family:'Fredoka One',cursive;font-size:16px;color:var(--neon-pink);margin-bottom:6px;animation:textGlow 1.5s ease-in-out infinite alternate}
+@keyframes textGlow{from{text-shadow:0 0 10px rgba(255,45,149,.4)}to{text-shadow:0 0 25px rgba(255,45,149,..8),0 0 50px rgba(255,45,149,.3)}}
+.haggle-status{font-size:12px;color:var(--text-dim);min-height:36px;line-height:1.5}
+.haggle-result{margin-top:10px;padding:10px;border-radius:8px;font-size:12px;display:none}
+.haggle-result.show{display:block;animation:slideIn .4s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.haggle-result.win{background:rgba(51,255,119,.1);border:1px solid var(--success);color:var(--success)}
+.haggle-result.lose{background:rgba(255,51,85,.1);border:1px solid var(--danger);color:var(--danger)}
+.haggle-result.draw{background:rgba(255,170,0,.1);border:1px solid var(--warning);color:var(--warning)}
+.buttons-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.big-btn{padding:14px 10px;border:none;border-radius:10px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1px;position:relative;overflow:hidden;color:#fff}
+.big-btn:active{transform:scale(.95)}.big-btn:hover{filter:brightness(1.2);transform:translateY(-1px)}
+.big-btn::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.1) 50%,transparent 60%);transform:translateX(-100%);transition:transform .6s}
+.big-btn:hover::after{transform:translateX(100%)}
+.btn-haggle{background:linear-gradient(135deg,#ff2d95,#ff6a00);box-shadow:0 3px 15px rgba(255,45,149,.3)}
+.btn-approve{background:linear-gradient(135deg,#39ff14,#00cc66);color:#0a0a1a;box-shadow:0 3px 15px rgba(57,255,20,.3)}
+.btn-reject{background:linear-gradient(135deg,#ff3355,#cc0033);box-shadow:0 3px 15px rgba(255,51,85,.3)}
+.btn-defend{background:linear-gradient(135deg,#00f0ff,#0088ff);color:#0a0a1a;box-shadow:0 3px 15px rgba(0,240,255,.3)}
+.btn-concede{background:linear-gradient(135deg,#b829dd,#ff2d95);box-shadow:0 3px 15px rgba(184,41,221,.3)}
+.btn-coffee{background:linear-gradient(135deg,#6B3A00,#D4A574);box-shadow:0 3px 15px rgba(139,69,19,.3)}
+.btn-reset{background:linear-gradient(135deg,#444,#666);box-shadow:0 3px 15px rgba(100,100,100,.3);font-size:10px;padding:10px 8px}
+.btn-spice{background:linear-gradient(135deg,#ffaa00,#ff6a00);color:#0a0a1a;box-shadow:0 3px 15px rgba(255,170,0,.3)}
+.btn-troll{background:linear-gradient(135deg,#ff2d95,#b829dd);box-shadow:0 3px 15px rgba(255,45,149,.3);font-size:10px;padding:10px 8px}
+.feed-container{max-height:380px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--neon-purple) transparent}
+.feed-container::-webkit-scrollbar{width:5px}.feed-container::-webkit-scrollbar-track{background:transparent}.feed-container::-webkit-scrollbar-thumb{background:var(--neon-purple);border-radius:3px}
+.feed-item{padding:8px 10px;margin-bottom:6px;border-radius:6px;background:rgba(255,255,255,.025);border-left:3px solid var(--neon-blue);font-size:11px;line-height:1.4;animation:feedIn .3s ease}
+.feed-item:hover{background:rgba(255,255,255,.05)}.feed-item.pop{border-left-color:var(--neon-pink);background:rgba(255,45,149,.06)}.feed-item.good{border-left-color:var(--neon-green);background:rgba(57,255,20,.04)}.feed-item.bad{border-left-color:var(--danger);background:rgba(255,51,85,.04)}.feed-item.warn{border-left-color:var(--warning);background:rgba(255,170,0,.04)}
+@keyframes feedIn{from{opacity:0;transform:translateX(-15px)}to{opacity:1;transform:translateX(0)}}
+.feed-time{color:var(--neon-blue);font-family:'Orbitron',sans-serif;font-size:9px}.feed-text{margin-top:2px}.feed-actor{font-weight:700}
+.coffee-visual{font-size:50px;text-align:center;margin:8px 0;animation:coffeeSteam 2s ease-in-out infinite}
+@keyframes coffeeSteam{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.coffee-meter{height:16px;background:rgba(255,255,255,.05);border-radius:8px;overflow:hidden;margin:8px 0}
+.coffee-fill{height:100%;border-radius:8px;transition:width .5s,background .5s;background:linear-gradient(90deg,var(--neon-orange),var(--neon-yellow))}
+.coffee-label{font-family:'Orbitron',sans-serif;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+.quorum-display{text-align:center;margin:12px 0}
+.quorum-circle{width:100px;height:100px;border-radius:50%;margin:0 auto;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.quorum-circle svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.quorum-circle circle{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1s ease,stroke .5s}
+.quorum-pct{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;z-index:1;transition:color .5s}
+.quorum-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:2px}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:16px;font-size:9px;font-weight:700;font-family:'Orbitron',sans-serif}
+.status-active{background:rgba(51,255,20,.15);color:var(--success)}.status-under{background:rgba(255,170,0,.15);color:var(--warning)}.status-critical{background:rgba(255,51,85,.15);color:var(--danger)}
+.influence-bar-container{display:flex;align-items:center;gap:8px;margin:6px 0}
+.influence-icon{font-size:18px}.influence-bar{flex:1;height:20px;background:rgba(255,255,255,.05);border-radius:10px;overflow:hidden}
+.influence-fill{height:100%;border-radius:10px;transition:width .8s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;color:#0a0a1a}
+.influence-label{font-size:10px;width:70px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;flex-shrink:0}
+.chat-box{background:rgba(0,0,0,.3);border-radius:8px;padding:10px;height:180px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--neon-pink) transparent}
+.chat-box::-webkit-scrollbar{width:4px}.chat-box::-webkit-scrollbar-track{background:transparent}.chat-box::-webkit-scrollbar-thumb{background:var(--neon-pink);border-radius:2px}
+.chat-msg{margin-bottom:6px;font-size:11px;line-height:1.4}.chat-msg .sender{font-weight:700}.chat-msg .troll{color:var(--neon-pink)}.chat-msg .ceo{color:var(--neon-blue)}.chat-msg .exec{color:var(--neon-orange)}.chat-msg .sys{color:var(--neon-green)}
+.decision-list{max-height:230px;overflow-y:auto}
+.decision-list::-webkit-scrollbar{width:4px}.decision-list::-webkit-scrollbar-thumb{background:var(--neon-blue);border-radius:2px}
+.decision-item{display:flex;align-items:center;gap:8px;padding:6px 8px;margin-bottom:4px;border-radius:6px;background:rgba(255,255,255,.025);font-size:11px}
+.decision-badge{padding:2px 6px;border-radius:5px;font-size:9px;font-weight:700;text-transform:uppercase;font-family:'Orbitron',sans-serif;white-space:nowrap}
+.decision-badge.approve{background:rgba(51,255,20,.15);color:var(--success)}.decision-badge.reject{background:rgba(255,51,85,.15);color:var(--danger)}
+.decision-badge.haggle{background:rgba(255,45,149,.15);color:var(--neon-pink)}.decision-badge.defend{background:rgba(0,240,255,.15);color:var(--neon-blue)}
+.decision-badge.vote{background:rgba(57,255,20,.1);color:var(--neon-blue)}.decision-badge.crisis{background:rgba(255,51,85,.1);color:var(--danger)}.decision-badge.tick{background:rgba(255,255,255,.05);color:var(--text-dim)}
+#timeline{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--neon-pink) transparent}
+#timeline::-webkit-scrollbar{height:4px}#timeline::-webkit-scrollbar-thumb{background:var(--neon-pink);border-radius:2px}
+.timeline-event{min-width:100px;height:55px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;color:var(--text-dim);flex-shrink:0;transition:all .3s}
+.timeline-event:hover{background:rgba(255,255,255,.08);transform:scale(1.05)}
+.timeline-event span:first-child{font-size:16px;margin-bottom:2px}
+.haggle-progress-track{width:100%;height:24px;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;margin:8px 0}
+.haggle-progress-fill{height:100%;border-radius:12px;transition:width .4s ease;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:#0a0a1a}
+.warning-box{font-size:10px;color:var(--neon-yellow);background:rgba(255,170,0,.08);padding:6px 8px;border-radius:6px;margin-top:6px;line-height:1.5}
+.flash-overlay{position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s}
+.flash-overlay.active{opacity:.3;background:#fff}
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9998;overflow:hidden}
+.confetti-piece{position:absolute;width:8px;height:8px;top:-20px;animation:confettiFall linear forwards}
+@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.particle{position:absolute;width:2px;height:2px;border-radius:50%;animation:floatUp linear infinite;opacity:.3}
+@keyframes floatUp{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.3}90%{opacity:.3}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+.chat-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 12px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:12px;outline:none}
+.chat-input:focus{border-color:var(--neon-blue)}
+.shake{animation:shake .5s ease}@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}40%{transform:translateX(3px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
+.pulse-border{animation:pulseBorder 1s infinite}@keyframes pulseBorder{0%,100%{border-color:var(--neon-pink)}50%{border-color:var(--neon-purple)}}
+@media(max-width:1100px){.grid{grid-template-columns:1fr 1fr}.span-full{grid-column:1/-1}}
+@media(max-width:700px){.grid{grid-template-columns:1fr;padding:10px;gap:10px}.span-2,.span-full{grid-column:1/-1}.header{flex-direction:column;gap:8px;text-align:center;padding:12px}}
+</style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+<div class="flash-overlay" id="flashOverlay"></div>
+<div class="confetti-container" id="confettiContainer"></div>
+<div class="header">
+  <div class="header-left">
+    <div class="logo-box">🔮</div>
+    <div><h1>AI CEO SIMULATION</h1><div class="header-subtitle">Dr. Naledi Khumalo — Box Life Monitor</div></div>
+  </div>
+  <div class="header-right">
+    <div><div class="score-display" id="totalScore">0</div><div class="score-label">Haggle Score</div></div>
+    <div style="width:1px;height:30px;background:rgba(255,255,255,0.1)"></div>
+    <div><div class="live-indicator"><div class="live-dot"></div> LIVE</div>
+    <div style="font-size:9px;color:var(--text-dim);text-align:right">Day <span id="dayCount">1</span> | Cycle <span id="cycleCount">1</span></div></div>
+  </div>
+</div>
+<div class="grid">
+  <div class="panel panel-pink">
+    <div class="panel-title"><span class="icon">👑</span> CEO Status</div>
+    <div class="ceo-avatar"><div class="ring"></div><div class="ring ring-2"></div><div class="ring ring-3"></div>👩‍💼</div>
+    <div class="ceo-name">Dr. Naledi Khumalo</div>
+    <div class="ceo-title">AI Chief Executive Officer</div>
+    <div class="stat-row"><span class="stat-label">Title</span><span class="stat-value" style="color:var(--neon-pink)">CEO</span></div>
+    <div class="stat-row"><span class="stat-label">Company</span><span class="stat-value" style="font-size:12px">SynthCorp AI</span></div>
+    <div class="stat-row"><span class="stat-label">Board Trust</span><span class="stat-value" id="boardTrust" style="color:var(--neon-green)">87%</span></div>
+    <div class="bar-container"><div class="bar-fill" id="boardTrustBar" style="width:87%;background:var(--neon-green)"></div></div>
+    <div class="stat-row" style="margin-top:6px"><span class="stat-label">Approval</span><span class="stat-value" id="approvalRating" style="color:var(--neon-blue)">72%</span></div>
+    <div class="bar-container"><div class="bar-fill" id="approvalBar" style="width:72%;background:var(--neon-blue)"></div></div>
+    <div class="stat-row" style="margin-top:6px"><span class="stat-label">Stress</span><span class="stat-value" id="stressLevel" style="color:var(--neon-yellow)">34%</span></div>
+    <div class="bar-container"><div class="bar-fill" id="stressBar" style="width:34%;background:var(--neon-yellow)"></div></div>
+  </div>
+  <div class="panel span-2" style="border-color:var(--neon-pink)">
+    <div class="panel-title"><span class="icon">⚔️</span> Haggle Arena — Live Negotiation</div>
+    <div class="haggle-box">
+      <div class="haggle-target" id="haggleTarget">⚡ EXECUTIVE COFFEE MEME INCIDENT ⚡</div>
+      <div style="font-size:10px;color:var(--text-dim);margin-bottom:6px">🗿 <b>TROLL_BOT_01</b> exposed a meme about CEO's coffee approval. Exec VP <b style="color:var(--neon-orange)">Exec_Mocha42</b> demands accountability. Quorum under threat.</div>
+      <div class="haggle-status" id="haggleStatus">🎯 <b>Haggling in progress...</b> Dr. Khumalo is being challenged on maintaining quorum. The executive coffee she approved has created a quorum crisis.</div>
+    </div>
+    <div id="haggleResult" class="haggle-result"></div>
+    <div class="haggle-progress-track"><div class="haggle-progress-fill" id="haggleProgress" style="width:0%;background:linear-gradient(90deg,var(--neon-pink),var(--neon-purple))">0%</div></div>
+    <div style="text-align:center;margin:6px 0;display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+      <span style="font-size:9px;color:var(--text-dim)">POWER:</span><span id="hagglePower" style="font-family:'Orbitron',sans-serif;font-size:18px;color:var(--neon-pink)">100</span>
+      <span style="font-size:9px;color:var(--text-dim)">COUNTERS:</span><span id="counterAttacks" style="font-family:'Orbitron',sans-serif;font-size:18px;color:var(--neon-blue)">3</span>
+    </div>
+    <div class="buttons-grid">
+      <button class="big-btn btn-haggle" onclick="doHaggle()">⚔️ HAGGLE!</button>
+      <button class="big-btn btn-defend" onclick="doDefend()">🛡️ DEFEND</button>
+      <button class="big-btn btn-approve" onclick="doApprove()">✅ APPROVE</button>
+      <button class="big-btn btn-reject" onclick="doReject()">❌ REJECT</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:6px">
+      <button class="big-btn btn-troll" style="flex:1;font-size:10px;padding:10px 6px" onclick="doTroll()">🗿 TROLL BACK</button>
+      <button class="big-btn btn-concede" style="flex:1;font-size:10px;padding:10px 6px" onclick="doConcede()">🏳️ CONCEDE</button>
+    </div>
+  </div>
+  <div class="panel panel-blue">
+    <div class="panel-title"><span class="icon">📡</span> Live Feed</div>
+    <div class="feed-container" id="feedContainer"></div>
+  </div>
+  <div class="panel panel-orange">
+    <div class="panel-title"><span class="icon">☕</span> Executive Coffee Division</div>
+    <div class="coffee-visual" id="coffeeVisual">☕</div>
+    <div style="text-align:center;margin-bottom:6px"><div style="font-size:14px;font-weight:700" id="coffeeLabel">SynthCorp Premium Blend</div>
+    <div style="font-size:10px;color:var(--text-dim)">Dr. K. approved | VP: 🏢 Exec_Mocha42</div></div>
+    <div class="coffee-label">Coffee Quality Index (CQI)</div>
+    <div class="coffee-meter"><div class="coffee-fill" id="coffeeFill" style="width:78%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim)"><span>0</span><span>50</span><span>100</span></div>
+    <div style="margin-top:10px"><div class="coffee-label">Troll Approval Meter</div>
+    <div class="coffee-meter"><div class="coffee-fill" id="trollFill" style="width:25%;background:linear-gradient(90deg,var(--neon-pink),var(--neon-purple))"></div></div></div>
+    <button class="big-btn btn-coffee" onclick="brewCoffee()" style="width:100%;margin-top:10px">☕ BREW NEW COFFEE</button>
+    <button class="big-btn btn-spice" onclick="spiceCoffee()" style="width:100%;margin-top:5px;font-size:11px;padding:10px">🌶️ SPICE (TROLL MODE)</button>
+  </div>
+  <div class="panel panel-green">
+    <div class="panel-title"><span class="icon">📊</span> Quorum Compliance</div>
+    <div class="quorum-display"><div class="quorum-circle">
+      <svg width="100" height="100" viewBox="0 0 100 100"><circle class="quorum-bg" cx="50" cy="50" r="42"></circle>
+      <circle class="quorum-fill" id="quorumCircle" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"></circle></svg>
+      <div class="quorum-center"><div class="quorum-val" id="quorumPct" style="color:var(--neon-green)">67%</div><div class="quorum-label">Quorum</div></div></div>
+    </div>
+    <div style="text-align:center;margin:6px 0"><span id="quorumStatus" class="status-badge status-active">✅ QUORUM OK</span></div>
+    <div style="font-size:10px;color:var(--text-dim);line-height:1.5"><b>📋 Incident:</b> Exec_Mocha42: coffee blend "too energizing," board members over-caffeinated, quorum decorum disrupted. <b>🗿 TROLL_BOT_01</b> amplified with meme.</div>
+    <div style="font-size:10px;color:var(--neon-yellow);background:rgba(255,170,0,.08);padding:6px;border-radius:6px;margin-top:6px">⚠️ Below 50% quorum = Troll escalation!</div>
+    <button class="big-btn btn-defend" onclick="callQuorumVote()" style="width:100%;margin-top:8px">🗳️ CALL QUORUM VOTE</button>
+  </div>
+  <div class="panel panel-purple">
+    <div class="panel-title"><span class="icon">📈</span> Influence Meter</div>
+    <div class="influence-bar-container"><span class="influence-label">Dr. K.</span><div class="influence-bar"><div class="influence-fill" id="ceoInfluence" style="width:82%;background:linear-gradient(90deg,var(--neon-pink),var(--neon-purple))">82</div></div><span style="font-size:10px;color:var(--neon-pink);font-family:'Orbitron',sans-serif">82</span></div>
+    <div class="influence-bar-container"><span class="influence-label">TROLL</span><div class="influence-bar"><div class="influence-fill" id="trollInfluence" style="width:45%;background:linear-gradient(90deg,var(--neon-purple),var(--neon-pink))">45</div></div><span style="font-size:10px;color:var(--neon-purple);font-family:'Orbitron',sans-serif">45</span></div>
+    <div class="influence-bar-container"><span class="influence-label">Exec_Mocha</span><div class="influence-bar"><div class="influence-fill" id="execInfluence" style="width:65%;background:linear-gradient(90deg,var(--neon-orange),var(--neon-yellow))">65</div></div><span style="font-size:10px;color:var(--neon-orange);font-family:'Orbitron',sans-serif">65</span></div>
+    <div class="influence-bar-container"><span class="influence-label">Board</span><div class="influence-bar"><div class="influence-fill" id="boardInfluence" style="width:58%;background:linear-gradient(90deg,var(--neon-blue),var(--neon-green))">58</div></div><span style="font-size:10px;color:var(--neon-blue);font-family:'Orbitron',sans-serif">58</span></div>
+    <div class="influence-bar-container"><span class="influence-label">Media</span><div class="influence-bar"><div class="influence-fill" id="mediaInfluence" style="width:35%;background:linear-gradient(90deg,var(--danger),var(--neon-orange))">35</div></div><span style="font-size:10px;color:var(--danger);font-family:'Orbitron',sans-serif">35</span></div>
+    <div class="influence-bar-container" style="margin-top:8px"><span class="influence-label">🤖 AI Hype</span><div class="influence-bar"><div class="influence-fill" id="aiHype" style="width:90%;background:linear-gradient(90deg,var(--neon-green),var(--neon-blue))">90</div></div><span style="font-size:10px;color:var(--neon-green);font-family:'Orbitron',sans-serif">90</span></div>
+  </div>
+  <div class="panel panel-purple">
+    <div class="panel-title"><span class="icon">💬</span> Corporate Slack</div>
+    <div class="chat-box" id="chatBox"></div>
+    <div style="display:flex;gap:5px;margin-top:8px">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Type your response..." onkeypress="if(event.key==='Enter')sendChat()">
+      <button class="big-btn btn-defend" onclick="sendChat()" style="padding:8px 12px;font-size:10px;flex-shrink:0">SEND</button>
+    </div>
+  </div>
+  <div class="panel panel-blue">
+    <div class="panel-title"><span class="icon">📜</span> Decision Log</div>
+    <div class="decision-list" id="decisionList"></div>
+  </div>
+  <div class="panel panel-orange">
+    <div class="panel-title"><span class="icon">⚙️</span> Simulation Controls</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+      <button class="big-btn btn-spice" onclick="simulateTick()"><span style="font-size:16px">⏭️</span><br>Tick</button>
+      <button class="big-btn btn-approve" onclick="advanceCycle()"><span style="font-size:16px">🔄</span><br>Next Cycle</button>
+      <button class="big-btn btn-defend" onclick="triggerEvent()"><span style="font-size:16px">🎲</span><br>Random Event</button>
+      <button class="big-btn btn-reject" onclick="startCrisis()"><span style="font-size:16px">🚨</span><br>Crisis!</button>
+    </div>
+    <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;margin-top:6px">
+      <div style="font-size:10px;color:var(--text-dim);margin-bottom:6px"><b>📊 SIM STATS</b></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;">
+        <div>Won: <b style="color:var(--success)" id="hagglesWon">0</b></div>
+        <div>Lost: <b style="color:var(--danger)" id="hagglesLost">0</b></div>
+        <div>Coffee: <b style="color:var(--neon-orange)" id="coffeeBrews">0</b></div>
+        <div>Trolls: <b style="color:var(--neon-pink)" id="trollAttacks">0</b></div>
+        <div>Quorum: <b style="color:var(--neon-blue)" id="quorumCalls">0</b></div>
+        <div>Votes: <b style="color:var(--neon-green)" id="votesCast">0</b></div>
+      </div>
+    </div>
+    <button class="big-btn btn-haggle" onclick="resetSimulation()" style="width:100%;margin-top:8px;font-size:11px">🔄 RESET SIMULATION</button>
+  </div>
+  <div class="panel panel-pink span-full">
+    <div class="panel-title"><span class="icon">⏱️</span> Real-Time Event Timeline</div>
+    <div id="timeline"><div class="timeline-event" id="timelineStart"><span>🚀</span><span>Start</span></div></div>
+  </div>
+</div>
+<script>
+const S={score:0,boardTrust:87,approvalRating:72,stress:34,coffeeQuality:78,trollApproval:25,quorum:67,ceoInfluence:82,trollInfluence:45,execInfluence:65,boardInfluence:58,mediaSentiment:35,aiHype:90,hagglePower:100,counterAttacks:3,day:1,cycle:1,hagglesWon:0,hagglesLost:0,coffeeBrews:0,trollAttacks:0,quorumCalls:0,votesCast:0,haggleInProgress:false,haggleProgress:0,crisisActive:false};
+const feedMessages=[{text:'🏢 @Exec_Mocha42 filed formal complaint about executive coffee blend',type:'bad',actor:'Corp Secretary'},{text:'🗿 TROLL_BOT_01 posted meme: "CEO approves coffee so strong it dissolves board quorum"',type:'pop',actor:'🗿 TROLL_BOT_01'},{text:'📊 Quorum sensor detected members leaving session after coffee break',type:'warn',actor:'System'},{text:'⚡ Exec VP calls emergency haggling session for coffee accountability',type:'bad',actor:'Exec_Mocha42'},{text:'👑 Dr. Khumalo: "The coffee was within ISO-9001 beverage standards"',type:'ceo',actor:'Dr. Naledi K.'},{text:'📱 Twitter/X trending: #CoffeeGate #CEOinABox #QuorumCrisis',type:'warn',actor:'Social Media'},{text:'🤖 AI Ethics Watchdog: "Monitoring coffee governance protocols"',type:'sys',actor:'AI Ethics'},{text:'🗳️ Secret ballot initiated: Should CEO maintain coffee decision?',type:'sys',actor:'Board Vote'},{text:'☕ TROLL_BOT_01 sequel meme: "CEO\'s espresso shot of power"',type:'pop',actor:'🗿 TROLL_BOT_01'},{text:'🏢 Exec_Mocha42 demands coffee quality audit of supply chain',type:'exec',actor:'Exec_Mocha42'},{text:'📈 Stock price unaffected — investors love the drama',type:'good',actor:'Market Analyst'},{text:'🎯 AI consultant recommends "decaf democracy" framework',type:'sys',actor:'AI Consultant'},{text:'🚨 MEME ALERT: "This coffee is stronger than the board constitution"',type:'pop',actor:'🗿 TROLL_BOT_01'},{text:'📡 Dr. Khumalo preparing counter-meme strategy with AI comms team',type:'ceo',actor:'Dr. Naledi K.'}];
+const haggleResponses=[{text:'🔥 "My coffee approval was within full regulatory compliance. The quorum issue lies with those who can\'t handle espresso."',res:'strong'},{text:'🛡️ "I invoke Section 14.7 — the blend meets all standards."',res:'def'},{text:'💧 "Perhaps we should water down the coffee AND the drama."',res:'humor'},{text:'⚖️ "A taste-test tribunal. Let the board judge the blend."',res:'diplo'},{text:'🗿 "TROLL_BOT_01, your meme had worse engagement than my quarterly report."',res:'counter'},{text:'☕ "I\'ll switch to decaf if you maintain quorum without caffeine. Deal?"',res:'conc'},{text:'📊 "87% board trust says you\'re all just hangry. Next item."',res:'strong'}];
+const trollQuotes=['🗿 "The people demand answers about the coffee!"','🗿 "This meme has 10K likes. You\'re going viral, CEO!"','🗿 "COFFEE-GATE: Episode III — The Latte Strikes Back"','🗿 "Quorum update: 3 more members heading to the espresso machine"','🗿 "I\'m not blocking you, CEO. You\'re blocking yourself."'];
+const crisisEvents=[{name:"Coffee Shortage",desc:"Supply chain disruption! Reserves depleted 40%.",ti:-8,qi:-10},{name:"Viral Thread",desc:"Viral thread exposes CEO's coffee order history.",ti:-12,qi:-5},{name:"Espionage",desc:"Rival caught planting decaf in exec machine!",ti:5,qi:8},{name:"AI Overlord",desc:"TROLL_BOT_01 gains sentience, declares itself Coffee Czar!",ti:-5,qi:-15},{name:"Barista Strike",desc:"Corporate baristas demand unionization!",ti:-6,qi:-8},{name:"Quantum Coffee",desc:"Coffee exists as both hot AND cold. Board confused.",ti:3,qi:-5}];
+const coffeeNames=['☕ Espresso Supreme','🫘 Dark Roast Decadence','🌿 Lavender Latte','🔥 Dragon Breath Blend','💎 Diamond Dust Cold Brew','🧊 Nitro Cascade','🍫 Mocha Mayhem','🌶️ Ghost Pepper Grande'];
+const feedEl=document.getElementById('feedContainer'),chatBox=document.getElementById('chatBox'),decisionList=document.getElementById('decisionList'),timelineEl=document.getElementById('timeline');
+function $(id){return document.getElementById(id)}function clamp(v,mn,mx){return Math.max(mn,Math.min(mx,v))}
+function init(){createParticles();addFeed('System','🎬 Simulation initialized. Dr. Khumalo enters the box.','sys');addChat('sys','Simulation STARTED. Welcome to the AI CEO Box Simulation.');addChat('exec','🏢 Exec_Mocha42: "This coffee situation is a DISGRACE."');addChat('troll','🗿 TROLL_BOT_01: "Memes loaded. Target acquired."');addChat('ceo','👩‍💼 Dr. K.: "Let\'s begin. ☕"');updateAllUI();addTimelineEvent('⏱️','Init');autoTick()}
+function createParticles(){const c=$('particles');['#ff2d95','#00f0ff','#b829dd','#39ff14','#ff6a00'].forEach(col=>{for(let i=0;i<6;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.background=col;p.style.animationDuration=(8+Math.random()*15)+'s';p.style.animationDelay=Math.random()*10+'s';p.style.width=p.style.height=(1+Math.random()*3)+'px';c.appendChild(p)}})}
+function updateAllUI(){$('totalScore').textContent=S.score;$('dayCount').textContent=S.day;$('cycleCount').textContent=S.cycle;updateStat('boardTrust','boardTrustBar',S.boardTrust);updateStat('approvalRating','approvalBar',S.approvalRating);updateStat('stress','stressBar',S.stress);$('coffeeFill').style.width=S.coffeeQuality+'%';$('trollFill').style.width=S.trollApproval+'%';updateQuorum();setInf('ceoInfluence','ceoInfluence',S.ceoInfluence);setInf('trollInfluence','trollInfluence',S.trollInfluence);setInf('execInfluence','execInfluence',S.execInfluence);setInf('boardInfluence','boardInfluence',S.boardInfluence);setInf('mediaInfluence','mediaInfluence',S.mediaSentiment);setInf('aiHype','aiHype',S.aiHype);$('hagglesWon').textContent=S.hagglesWon;$('hagglesLost').textContent=S.hagglesLost;$('coffeeBrews').textContent=S.coffeeBrews;$('trollAttacks').textContent=S.trollAttacks;$('quorumCalls').textContent=S.quorumCalls;$('votesCast').textContent=S.votesCast;$('hagglePower').textContent=Math.round(S.hagglePower);$('counterAttacks').textContent=S.counterAttacks}
+function updateStat(id,barId,val){const el=$(id),bar=$(barId);el.textContent=val+'%';bar.style.width=val+'%';bar.style.background=val>=70?'var(--success)':val>=40?'var(--warning)':'var(--danger)'}
+function updateQuorum(){const circle=$('quorumCircle'),pctEl=$('quorumPct'),statusEl=$('quorumStatus');const circ=2*Math.PI*42;circle.style.strokeDashoffset=circ-(S.quorum/100)*circ;pctEl.textContent=S.quorum+'%';const ok=S.quorum>=60;const warn=S.quorum>=40;pctEl.style.color=ok?'var(--neon-green)':warn?'var(--neon-yellow)':'var(--danger)';circle.style.stroke=ok?'var(--neon-green)':warn?'var(--neon-yellow)':'var(--danger)';statusEl.className='status-badge '+(ok?'status-active':warn?'status-under':'status-critical');statusEl.innerHTML=ok?'✅ QUORUM OK':warn?'⚠️ QUORUM AT RISK':'🚨 QUORUM LOST'}
+function setInf(elId,fillId,val){const el=$(fillId);el.style.width=val+'%';el.textContent=val}
+function flash(col='#fff'){const el=$('flashOverlay');el.style.background=col;el.classList.add('active');setTimeout(()=>el.classList.remove('active'),150)}
+function launchConfetti(){const c=$('confettiContainer'),cols=['#ff2d95','#00f0ff','#b829dd','#39ff14','#ff6a00','#ffe600'];for(let i=0;i<40;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.left=Math.random()*100+'%';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.animationDuration=(2+Math.random()*3)+'s';p.style.animationDelay=Math.random()*.5+'s';p.style.width=(5+Math.random()*10)+'px';p.style.height=(5+Math.random()*10)+'px';p.style.borderRadius=Math.random()>.5?'50%':'2px';c.appendChild(p);setTimeout(()=>p.remove(),5000)}}
+function addTimelineEvent(emoji,label){const d=document.createElement('div');d.className='timeline-event';d.innerHTML=`<span>${emoji}</span><span>${label}</span>`;d.onmouseover=()=>{d.style.background='rgba(255,255,255,.08)';};d.onmouseout=()=>{d.style.background='rgba(255,255,255,.03)';};timelineEl.appendChild(d);timelineEl.scrollLeft=timelineEl.scrollWidth}
+function addFeed(actor,text,type=''){const now=new Date();const time=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');const div=document.createElement('div');div.className='feed-item '+type;div.innerHTML=`<div class="feed-time">${time}</div><div class="feed-text"><span class="feed-actor">${actor}:</span> ${text}</div>`;feedEl.insertBefore(div,feedEl.firstChild);while(feedEl.children.length>50)feedEl.removeChild(feedEl.lastChild)}
+function addChat(who,text){const div=document.createElement('div');div.className='chat-msg';const names={troll:'🗿 TROLL_BOT_01',ceo:'👩‍💼 Dr. K.',exec:'🏢 Exec_Mocha42',sys:'🤖 SYS'};div.innerHTML=`<span class="sender ${who}">[${names[who]||who}]</span> ${text}`;chatBox.appendChild(div);chatBox.scrollTop=chatBox.scrollHeight;while(chatBox.children.length>30)chatBox.removeChild(chatBox.firstChild)}
+function sendChat(){const input=$('chatInput'),text=input.value.trim();if(!text)return;addChat('ceo',text);input.value='';setTimeout(()=>{const replies=['🗿 "Nice try, CEO. The internet remembers everything."','🏢 Exec_Mocha42: "Still waiting for that coffee quality report..."','🤖 SYS: "Quorum vote scheduled."','👩‍💼 Dr. K.: "Let\'s circle back on that."'];addChat('troll',replies[Math.floor(Math.random()*replies.length)])},1500)}
+function addDecision(type,text){const div=document.createElement('div');div.className='decision-item';const badges={approve:'✅ APPROVE',reject:'❌ REJECT',haggle:'⚔️ HAGGLE',defend:'🛡️ DEFEND',vote:'🗳️ VOTE',crisis:'🚨 CRISIS',tick:'⏭️ TICK'};div.innerHTML=`<span class="decision-badge ${type}">${badges[type]||type}</span><span style="color:var(--text-primary)">${text}</span>`;decisionList.insertBefore(div,decisionList.firstChild);while(decisionList.children.length>30)decisionList.removeChild(decisionList.lastChild)}
+function updateScore(d){S.score=Math.max(0,S.score+d);$('totalScore').textContent=S.score}
+function doHaggle(){if(S.haggleInProgress)return;S.haggleInProgress=true;S.haggleProgress=0;const hp$=$('hagglePower'),pg=$('haggleProgress'),hs=$('haggleStatus'),hr=$('haggleResult');hs.innerHTML='⚡ <b>HAGGLE ROUND IN PROGRESS!</b> Dr. Khumalo fires back...';hr.className='haggle-result';hr.style.display='none';let p=0;const iv=setInterval(()=>{p+=Math.random()*15+5;if(p>100)p=100;S.haggleProgress=p;pg.style.width=p+'%';pg.textContent=Math.round(p)+'%';hp$.textContent=Math.round(S.hagglePower-p*.8);if(p>=100){clearInterval(iv);setTimeout(resolveHaggle,500)}},300);addDecision('haggle',`Haggle initiated — Power ${S.hagglePower}`);addFeed('System','Haggle round initiated!','sys')}
+function resolveHaggle(){S.haggleInProgress=false;const outcomes=['win','win','draw','lose','win'];const outcome=outcomes[Math.floor(Math.random()*outcomes.length)];const pg=$('haggleProgress'),hr=$('haggleResult'),hs=$('haggleStatus');if(outcome==='win'){hr.className='haggle-result win show';hr.innerHTML='🎉 <b>HAGGLE WON!</b> Dr. Khumalo defends coffee policy. Board acknowledges.';hs.innerHTML='✅ Haggle won! Coffee policy stands. Troll meme countered.';S.boardTrust=clamp(S.boardTrust+5,0,100);S.approvalRating=clamp(S.approvalRating+3,0,100);S.quorum=clamp(S.quorum+4,0,100);S.trollApproval=clamp(S.trollApproval-8,0,100);S.ceoInfluence=clamp(S.ceoInfluence+3,0,100);S.trollInfluence=clamp(S.trollInfluence-4,0,100);updateScore(50);S.hagglesWon++;addTimelineEvent('🏆','Haggle Win');addChat('ceo',haggleResponses[Math.floor(Math.random()*haggleResponses.length)].text);addFeed('Dr. K.','Successfully defended coffee policy!','good');launchConfetti()}else if(outcome==='draw'){hr.className='haggle-result draw show';hr.innerHTML='🤝 <b>DRAW!</b> Committee will review coffee blend next cycle.';hs.innerHTML='🤝 Haggle drawn — committee review.';S.quorum=clamp(S.quorum-2,0,100);S.stress=clamp(S.stress+5,0,100);updateScore(15);addTimelineEvent('🤝','Draw');addFeed('System','Haggle drawn. Committee review pending.','warn')}else{hr.className='haggle-result lose show';hr.innerHTML='💀 <b>HAGGLE LOST!</b> Troll meme went viral. Board pressured Dr. Khumalo.';hs.innerHTML='😔 Haggle lost. The trolls are winning.';S.boardTrust=clamp(S.boardTrust-8,0,100);S.approvalRating=clamp(S.approvalRating-6,0,100);S.quorum=clamp(S.quorum-7,0,100);S.trollApproval=clamp(S.trollApproval+10,0,100);S.stress=clamp(S.stress+10,0,100);S.mediaSentiment=clamp(S.mediaSentiment-8,0,100);S.trollInfluence=clamp(S.trollInfluence+5,0,100);updateScore(-20);S.hagglesLost++;addTimelineEvent('💔','Loss');addChat('troll','🗿 "The people have spoken! Coffee-gate is NOT over!"');addFeed('TROLL','Released follow-up meme: "CEO brews chaos"','pop')}S.hagglePower=clamp(100-S.haggleProgress*.3,20,100);updateAllUI()}
+function doDefend(){flash('#00f0ff');S.counterAttacks=Math.max(0,S.counterAttacks-1);$('counterAttacks').textContent=S.counterAttacks;S.boardTrust=clamp(S.boardTrust+3,0,100);S.ceoInfluence=clamp(S.ceoInfluence+2,0,100);S.trollInfluence=clamp(S.trollInfluence-3,0,100);updateScore(20);addDecision('defend','CEO counter-attacked against troller assault');addFeed('Dr. K.','Counter-defense executed.','ceo');addChat('ceo',haggleResponses[Math.floor(Math.random()*haggleResponses.length)].text);updateAllUI()}
+function doApprove(){flash('#39ff14');S.coffeeQuality=clamp(S.coffeeQuality+5,0,100);S.boardTrust=clamp(S.boardTrust+2,0,100);S.quorum=clamp(S.quorum+3,0,100);S.coffeeBrews++;updateScore(10);addDecision('approve','Double down on coffee approval');addFeed('Dr. K.','Re-approved coffee blend','good');addChat('exec','🏢 Exec_Mocha42: "I STILL don\'t approve, but numbers look better..."');updateAllUI()}
+function doReject(){flash('#ff3355');S.stress=clamp(S.stress+8,0,100);S.coffeeQuality=clamp(S.coffeeQuality-15,0,100);S.trollApproval=clamp(S.trollApproval+15,0,100);S.trollInfluence=clamp(S.trollInfluence+5,0,100);updateScore(-10);addDecision('reject','Rejected coffee policy under pressure');addFeed('Dr. K.','Under pressure reconsidered coffee.','bad');addChat('troll','🗿 "YES! CEO folds!"');updateAllUI()}
+function doConcede(){flash('#b829dd');S.quorum=clamp(S.quorum-10,0,100);S.boardTrust=clamp(S.boardTrust-10,0,100);S.approvalRating=clamp(S.approvalRating-8,0,100);S.trollApproval=clamp(S.trollApproval+20,0,100);S.trollInfluence=clamp(S.trollInfluence+8,0,100);S.stress=clamp(S.stress+15,0,100);updateScore(-50);addDecision('reject','⚠️ CONCEDED — Major damage!');addFeed('🚨','DR. KHUMALO CONCEDES! Board shaken.','bad');addChat('troll','🗿 "BOW BEFORE THE MEME!"');launchConfetti();updateAllUI()}
+function doTroll(){flash('#ff2d95');if(S.counterAttacks>0){S.counterAttacks--;$('counterAttacks').textContent=S.counterAttacks;S.trollApproval=clamp(S.trollApproval-15,0,100);S.trollInfluence=clamp(S.trollInfluence-10,0,100);S.mediaSentiment=clamp(S.mediaSentiment+10,0,100);S.ceoInfluence=clamp(S.ceoInfluence+5,0,100);updateScore(30);addChat('ceo','🎯 Counter-meme launched!');addFeed('Dr. K.','Counter-troll operation executed.','good')}else{addChat('troll','🗿 "You\'re out of charges!"');addFeed('System','Counter-attack failed.','bad')}updateAllUI()}
+function brewCoffee(){flash('#8B4513');S.coffeeBrews++;S.coffeeQuality=clamp(S.coffeeQuality+Math.floor(Math.random()*15)+5,0,100);S.stress=clamp(S.stress-5,0,100);S.quorum=clamp(S.quorum+2,0,100);updateScore(10);addDecision('approve',`Brewed coffee — CQI: ${S.coffeeQuality}`);addFeed('System',`☕ New batch! Quality: ${S.coffeeQuality}`,'good');$('coffeeLabel').textContent=coffeeNames[Math.floor(Math.random()*coffeeNames.length)];updateAllUI()}
+function spiceCoffee(){flash('#ffaa00');S.trollApproval=clamp(S.trollApproval+12,0,100);S.execInfluence=clamp(S.execInfluence+3,0,100);S.stress=clamp(S.stress+8,0,100);S.quorum=clamp(S.quorum-5,0,100);updateScore(5);addDecision('haggle','🌶️ SPICE MODE — Risky move!');addFeed('🚨','SPICE MODE activated!','pop');addChat('troll','🗿 "Oh you did NOT just spice that!"');updateAllUI()}
+function callQuorumVote(){flash('#00f0ff');S.quorumCalls++;S.votesCast+=Math.floor(Math.random()*20)+10;const result=Math.random()>0.4;if(result){S.quorum=clamp(S.quorum+10,0,100);S.boardTrust=clamp(S.boardTrust+5,0,100);S.approvalRating=clamp(S.approvalRating+4,0,100);addDecision('vote',`Quorum VOTE PASSED! ${S.votesCast} votes.`);addFeed('System',`🗳️ Quorum PASSED! ${S.votesCast} votes.`,'good');addChat('sys','🤖 Quorum: 62% YES / 38% NO.')}else{S.quorum=clamp(S.quorum-12,0,100);S.boardTrust=clamp(S.boardTrust-5,0,100);addDecision('reject','Quorum vote FAILED!');addFeed('System','🗳️ Quorum FAILED!','bad');addChat('exec','🏢 Told ya. Coffee is destroying this board.')}updateAllUI()}
+function advanceCycle(){S.cycle++;if(S.cycle>5){S.cycle=1;S.day++}S.boardTrust=clamp(S.boardTrust+Math.floor(Math.random()*11)-5,0,100);S.approvalRating=clamp(S.approvalRating+Math.floor(Math.random()*11)-5,0,100);S.stress=clamp(S.stress+Math.floor(Math.random()*11)-3,0,100);S.coffeeQuality=clamp(S.coffeeQuality+Math.floor(Math.random()*11)-5,0,100);S.quorum=clamp(S.quorum+Math.floor(Math.random()*11)-5,0,100);S.aiHype=clamp(S.aiHype+Math.floor(Math.random()*7)-3,20,100);addFeed('System',`Cycle ${S.cycle}.${S.day} advancing...`,'sys');addTimelineEvent('🔄',`C${S.cycle}D${S.day}`);if(Math.random()>.7&&S.counterAttacks<5){S.counterAttacks++;addFeed('System','⚡ Counter-attack restored!','good')}updateAllUI()}
+function simulateTick(){advanceCycle();if(Math.random()>.6){const m=feedMessages[Math.floor(Math.random()*feedMessages.length)];addFeed(m.actor,m.text,m.type)}}
+function triggerEvent(){const evts=[{name:'📈 Board Meeting',desc:'Emergency board meeting re: coffee',t:3,q:2},{name:'🔥 Social Media Storm',desc:'New meme: CEO sipping coffee in boardroom',t:-5,q:-3},{name:'🤝 Truce',desc:'TROLL_BOT_01 offers peace — demands decaf',t:5,q:5},{name:'☕ Machine Breaks',desc:'Executive coffee machine explodes',t:-3,q:-5},{name:'🏆 Award',desc:'Dr. Khumalo wins "Most Resilient CEO"',t:10,q:8}];const evt=evts[Math.floor(Math.random()*evts.length)];flash(Math.random()>.5?'#b829dd':'#00f0ff');S.boardTrust=clamp(S.boardTrust+(evt.t||0),0,100);S.quorum=clamp(S.quorum+(evt.q||0),0,100);addFeed('System',`📢 ${evt.name}: ${evt.desc}`,'warn');addTimelineEvent('🎲',evt.name.split(' ').pop());updateAllUI()}
+function startCrisis(){if(S.crisisActive)return;S.crisisActive=true;flash('#ff3355');launchConfetti();const c=crisisEvents[Math.floor(Math.random()*crisisEvents.length)];S.boardTrust=clamp(S.boardTrust+c.ti,0,100);S.quorum=clamp(S.quorum+c.qi,0,100);S.stress=clamp(S.stress+15,0,100);S.trollApproval=clamp(S.trollApproval+10,0,100);addFeed('🚨 CRISIS',`${c.name}: ${c.desc}`,'bad');addChat('troll','🗿 "CRISIS MODE ACTIVATED. Board in shambles."');addChat('exec','🏢 Exec_Mocha42: "'+c.name+'?! YOUR fault, CEO!"');addTimelineEvent('🚨',c.name);setTimeout(()=>{S.crisisActive=false;addFeed('System','Crisis deactivated.','sys');updateAllUI()},3000);updateAllUI()}
+function resetSimulation(){Object.assign(S,{score:0,boardTrust:87,approvalRating:72,stress:34,coffeeQuality:78,trollApproval:25,quorum:67,ceoInfluence:82,trollInfluence:45,execInfluence:65,boardInfluence:58,mediaSentiment:35,aiHype:90,hagglePower:100,counterAttacks:3,day:1,cycle:1,hagglesWon:0,hagglesLost:0,coffeeBrews:0,trollAttacks:0,quorumCalls:0,votesCast:0,haggleInProgress:false,haggleProgress:0,crisisActive:false});feedEl.innerHTML='';chatBox.innerHTML='';decisionList.innerHTML='';timelineEl.innerHTML='<div class="timeline-event" id="timelineStart"><span>🚀</span><span>Start</span></div>';init()}
+function autoChat(){setTimeout(()=>{if(Math.random()>.4){const msgs=[{who:'troll',text:trollQuotes[Math.floor(Math.random()*trollQuotes.length)]},{who:'exec',text:'🏢 Exec_Mocha42: "Metrics unacceptable. Full audit demanded."'},{who:'sys',text:'🤖 SYS: Quorum sensors recalibrating...'},{who:'sys',text:'🤖 SYS: AI Hype rising. Interest: HIGH.'},{who:'ceo',text:'👩‍💼 Dr. K.: "Stay focused."'},{who:'troll',text:'🗿 TROLL_BOT_01: "Wait until they see the latte art."'}];const m=msgs[Math.floor(Math.random()*msgs.length)];addChat(m.who,m.text)}autoChat()},(Math.random()*8000)+5000)}
+function autoFeed(){setTimeout(()=>{if(Math.random()>.5){const m=feedMessages[Math.floor(Math.random()*feedMessages.length)];addFeed(m.actor,m.text,m.type)}autoFeed()},(Math.random()*12000)+8000)}
+function autoDrift(){setTimeout(()=>{const d=()=>{S.stress=clamp(S.stress+Math.floor(Math.random()*7)-3,0,100);S.coffeeQuality=clamp(S.coffeeQuality+Math.floor(Math.random()*5)-2,0,100);S.mediaSentiment=clamp(S.mediaSentiment+Math.floor(Math.random()*5)-3,0,100);S.aiHype=clamp(S.aiHype+Math.floor(Math.random()*3)-1,20,100);updateAllUI();setTimeout(d,5000+Math.random()*8000)};d()},3000)}
+function autoHaggle(){setTimeout(()=>{if(!S.haggleInProgress&&Math.random()>.7){addFeed('🗿 TROLL_BOT_01','Troll challenge! Arena heating up...','warn');doHaggle()}setTimeout(autoHaggle,15000+Math.random()*20000)},10000)}
+init();autoChat();autoFeed();autoDrift();autoHaggle();
+</script>
+</body>
+</html>
