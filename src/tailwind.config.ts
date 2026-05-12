@@ -6,7 +6,13 @@ const config: Config = {
     "./src/components/**/*.{ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        success: "#33ff77",
+        danger: "#ff3355",
+        warning: "#ffaa00",
+      },
+    },
   },
   plugins: [],
 };
