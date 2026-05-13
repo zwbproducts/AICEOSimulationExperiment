@@ -1,87 +1,26 @@
-# Active Context: Next.js Starter Template
+# Context — Current State & Recent Changes
 
-## Current State
+## Recent Changes (2026-05-13)
+### Critical: Memory Leak Fix in page.tsx
 
-**Template Status**: ✅ Ready for development
+**Problem:** The AI CEO Simulation was running as a "runaway train" consuming excessive RAM.
 
-The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. It's ready for AI-assisted expansion to build any type of application.
+**Root Causes Identified:**
+1. **Missing cleanup on 4 recursive `setTimeout` useEffects** — `botChatter`, `autoFeed`, `statDrift`, and `autoHaggle` all used recursive `setTimeout` patterns with NO cleanup return function. Every time an effect re-ran, a NEW timeout chain started while the OLD one kept running. Timers piled up indefinitely → memory exhaustion.
+2. **Unstable `doHaggle` reference** — `doHaggle` was a plain function (not wrapped in `useCallback`), creating a new reference every render. The `autoHaggle` effect depended on it, so it re-ran on EVERY render, spawning a new timeout chain each time. This was the worst offender.
+3. **Forward reference to `resolveHaggle`** — `doHaggle` called `resolveHaggle` inside a `setTimeout`, but `resolveHaggle` was declared AFTER `doHaggle`, causing a runtime reference error.
 
-## Recently Completed
+**Fixes Applied:**
+- Added `return () => clearTimeout(timeoutRef.current)` cleanup to all 4 recursive setTimeout effects
+- Used a shared `useRef` (`timeoutRef`) for the timeout ID so cleanup always clears the current timer
+- Wrapped all action functions (`doHaggle`, `doDefend`, `doApprove`, etc.) in `useCallback` with proper dependencies
+- Moved `resolveHaggle` declaration BEFORE `doHaggle` to fix forward reference
+- `doHaggle` is now stable — autoHaggle effect only re-runs when `haggleInProgress` actually changes
 
-- [x] Base Next.js 16 setup with App Router
-- [x] TypeScript configuration with strict mode
-- [x] Tailwind CSS 4 integration
-- [x] ESLint configuration
-- [x] Memory bank documentation
-- [x] Recipe system for common features
+**Result:** TypeScript compiles cleanly, ESLint passes with 0 errors (2 minor warnings about `launchConfetti` and `updateScore` deps that are acceptable).
 
-## Current Structure
-
-| File/Directory | Purpose | Status |
-|----------------|---------|--------|
-| `src/app/page.tsx` | Home page | ✅ Ready |
-| `src/app/layout.tsx` | Root layout | ✅ Ready |
-| `src/app/globals.css` | Global styles | ✅ Ready |
-| `.kilocode/` | AI context & recipes | ✅ Ready |
-
-## Current Focus
-
-The template is ready. Next steps depend on user requirements:
-
-1. What type of application to build
-2. What features are needed
-3. Design/branding preferences
-
-## Quick Start Guide
-
-### To add a new page:
-
-Create a file at `src/app/[route]/page.tsx`:
-```tsx
-export default function NewPage() {
-  return <div>New page content</div>;
-}
-```
-
-### To add components:
-
-Create `src/components/` directory and add components:
-```tsx
-// src/components/ui/Button.tsx
-export function Button({ children }: { children: React.ReactNode }) {
-  return <button className="px-4 py-2 bg-blue-600 text-white rounded">{children}</button>;
-}
-```
-
-### To add a database:
-
-Follow `.kilocode/recipes/add-database.md`
-
-### To add API routes:
-
-Create `src/app/api/[route]/route.ts`:
-```tsx
-import { NextResponse } from "next/server";
-
-export async function GET() {
-  return NextResponse.json({ message: "Hello" });
-}
-```
-
-## Available Recipes
-
-| Recipe | File | Use Case |
-|--------|------|----------|
-| Add Database | `.kilocode/recipes/add-database.md` | Data persistence with Drizzle + SQLite |
-
-## Pending Improvements
-
-- [ ] Add more recipes (auth, email, etc.)
-- [ ] Add example components
-- [ ] Add testing setup recipe
-
-## Session History
-
-| Date | Changes |
-|------|---------|
-| Initial | Template created with base setup |
+## Tech Stack
+- Next.js 16 with App Router
+- React 19, TypeScript 5.9
+- Tailwind CSS 4
+- Bun package manager
